@@ -8,18 +8,18 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 public class NoFarmMobListener implements Listener {
 
-    public NoFarmMobListener(NoFarm instance) {
-    }
-
     // Stop mobs from taking fall damge
     @EventHandler
     public void onEntityDamageMob(EntityDamageEvent event) {
         Entity e = event.getEntity();
-        if ((!(e instanceof Player))
-                && e.getLastDamageCause() != null
-                && (e.getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.FALL)) {
-            event.setDamage(0);
+        if (e instanceof Player)
+            return;
+        if (!NoFarm.getPlugin().getConfig().getBoolean("MobsDoNotTakeFallDamage"))
+            return;
 
+        if (e.getLastDamageCause() != null
+                && e.getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.FALL) {
+            event.setDamage(0);
         }
     }
 }

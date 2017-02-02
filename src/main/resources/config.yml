@@ -1,2 +1,2 @@
-NonPlayerDamageDropsItems: true
+NonPlayerDamageDropsItems: false
 MobsDoNotTakeFallDamage: true

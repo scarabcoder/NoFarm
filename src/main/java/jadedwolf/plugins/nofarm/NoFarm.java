@@ -1,10 +1,11 @@
 package jadedwolf.plugins.nofarm;
 
+import java.io.File;
 import java.util.logging.Logger;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfigurationOptions;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,10 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class NoFarm extends JavaPlugin {
 
     static final Logger log = Logger.getLogger("Minecraft");
-    private final NoFarmEntityListener entityListener = new NoFarmEntityListener(
-            this);
-    private final NoFarmMobListener mobListener = new NoFarmMobListener(
-            this);
+    private static Plugin plugin;
 
     @Override
     public void onDisable() {
@@ -26,28 +24,21 @@ public class NoFarm extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        plugin = this;
 
         // Load configuration
-        FileConfigurationOptions cfgOptions = getConfig().options();
-        cfgOptions.copyDefaults(true);
-        cfgOptions.copyHeader(true);
-        saveConfig();
+        File cfgFile = new File(getDataFolder(), "config.yml");
+        if (!cfgFile.exists()) {
+            saveResource("config.yml", true);
+            reloadConfig();
+        }
 
         PluginManager pm = getServer().getPluginManager();
-
-        if (getConfig().getBoolean("NonPlayerDamageDropsItems", true)) {
-            getServer().getPluginManager().registerEvents(this.entityListener, this);
-        }
-        if (getConfig().getBoolean("MobsDoNotTakeFallDamage", true)) {
-            getServer().getPluginManager().registerEvents(this.mobListener, this);
-        }
+        pm.registerEvents(new NoFarmEntityListener(), this);
+        pm.registerEvents(new NoFarmMobListener(), this);
 
         PluginDescriptionFile plugin = getDescription();
-        System.out.println(plugin.getName() + " version " + plugin.getVersion()
-                + " by lagcraft.com is now enabled.");
-
-
-
+        System.out.println(plugin.getName() + " version " + plugin.getVersion() + " by lagcraft.com is now enabled.");
     }
 
     @Override
@@ -65,5 +56,9 @@ public class NoFarm extends JavaPlugin {
             }
         }
         return false;
+    }
+
+    public static Plugin getPlugin() {
+        return plugin;
     }
 }

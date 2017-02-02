@@ -10,27 +10,25 @@ import org.bukkit.event.entity.EntityDeathEvent;
 
 public class NoFarmEntityListener implements Listener {
 
-    public NoFarmEntityListener(NoFarm instance) {
-    }
-
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
         Entity entity = event.getEntity();
-        if (event.getEntity() == null) {
+        if (entity == null || entity instanceof Player)
             return;
-        }
-        if (event.getEntity() instanceof Player) {
+
+        if (entity.getLastDamageCause() == null)
             return;
+
+        if (!NoFarm.getPlugin().getConfig().getBoolean("NonPlayerDamageDropsItems")) {
+            if (entity.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
+                EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) entity.getLastDamageCause();
+
+                if (e.getDamager() instanceof Player)
+                    return;
+
+                event.getDrops().clear();
+                event.setDroppedExp(0);
+            }
         }
-        if (event.getEntity().getLastDamageCause() == null) {
-            return;
-        }
-        if (event.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
-            return;
-        }
-        if (entity.getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
-            return;
-        }
-        event.getDrops().clear();
     }
 }
