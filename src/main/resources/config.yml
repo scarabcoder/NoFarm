@@ -1,2 +1,5 @@
 NonPlayerDamageDropsItems: false
 MobsDoNotTakeFallDamage: true
+PreventMobDropsOn:
+  - "COW"
+  - "ZOMBIE"

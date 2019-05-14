@@ -13,9 +13,10 @@ public class NoFarmEntityListener implements Listener {
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
+
         Entity entity = event.getEntity();
         // We only care about monsters dropping items in grinders
-        if (!(entity instanceof Monster))
+        if(!NoFarm.getPlugin().getConfig().getStringList("PreventMobDropsOn").contains(entity.getType().name()))
             return;
 
         if (entity.getLastDamageCause() == null)
